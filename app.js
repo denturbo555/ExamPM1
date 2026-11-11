@@ -190,6 +190,10 @@ function updateTimerDisplay() {
   if (state.timerSeconds <= 300) { // < 5 minutes
     elements.quizTimer.classList.add('warning');
   } else {
+    elements.quizTimer.classList.remove('warning');
+  }
+}
+
 // --- Render Current Question ---
 function renderCurrentQuestion() {
   const q = state.questions[state.currentIndex];
@@ -441,6 +445,19 @@ function renderReviewList(filter) {
       userAns.className = 'review-answer user-wrong';
       const userLetter = letters[q.userAnswer] || '';
       userAns.textContent = `❌ Ваш ответ: ${userLetter}) ${q.options[q.userAnswer]}`;
+      item.appendChild(userAns);
+    }
+
+    const correctAns = document.createElement('div');
+    correctAns.className = 'review-answer correct-ans';
+    const corrLetter = letters[q.correct] || '';
+    correctAns.textContent = `✔ Правильный ответ: ${corrLetter}) ${q.options[q.correct]}`;
+    item.appendChild(correctAns);
+
+    elements.reviewContainer.appendChild(item);
+  });
+}
+
 // --- Cheatsheet / Search Functionality ---
 function openSearchModal() {
   elements.searchModal.classList.add('open');
@@ -625,20 +642,3 @@ document.addEventListener('DOMContentLoaded', () => {
   setupEvents();
 });
 
-      item.appendChild(userAns);
-    }
-
-    const correctAns = document.createElement('div');
-    correctAns.className = 'review-answer correct-ans';
-    const corrLetter = letters[q.correct] || '';
-    correctAns.textContent = `✔ Правильный ответ: ${corrLetter}) ${q.options[q.correct]}`;
-    item.appendChild(correctAns);
-
-    elements.reviewContainer.appendChild(item);
-  });
-}
-
-
-    elements.quizTimer.classList.remove('warning');
-  }
-}
