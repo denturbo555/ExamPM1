@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Экзамен ПМ1 — Тестирование и подготовка</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💻</text></svg>">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo" id="headerLogo" title="На главную">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="12" rx="2" ry="2"></rect>
+            <line x1="2" y1="20" x2="22" y2="20"></line>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <h1>Экзамен ПМ1</h1>
+          <span>Тестирование и подготовка</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn-circle-icon" id="searchBtn" title="Шпаргалка / Поиск по вопросам">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#0ea5e9" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+        <button class="btn-circle-icon" id="themeToggleBtn" title="Переключить тему">
+          <span class="theme-icon-orb"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-wrapper">
+
+    <!-- Screen 1: Start / Setup Screen -->
+    <section id="startScreen" class="screen active">
+      <div class="main-card">
+        <!-- Top Badge -->
+        <div class="badge-pill">
+          <span class="badge-sparkle">★</span>
+          <span>161 уникальный вопрос • Без повторений</span>
+        </div>
+
+        <h2 class="hero-title">Тестирование по профессиональному модулю ПМ1</h2>
+        <p class="hero-subtitle">
+          Проверьте свои знания или подготовьтесь к экзамену. В каждом вопросе несколько вариантов ответа и только один правильный.
+        </p>
+
+        <!-- Mode Cards Grid -->
+        <div class="mode-cards-grid">
+          <div class="mode-card selected" data-mode="practice" id="modeCardPractice">
+            <div class="mode-card-icon bulb-icon">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18h6"></path>
+                <path d="M10 22h4"></path>
+                <path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"></path>
+              </svg>
+            </div>
+            <div class="mode-card-body">
+              <h3 class="mode-card-title">Режим «Обучение»</h3>
+              <p class="mode-card-desc">
+                Моментальная подсветка верного ответа сразу при выборе. Идеально для запоминания материала и подготовки.
+              </p>
+            </div>
+          </div>
+
+          <div class="mode-card" data-mode="exam" id="modeCardExam">
+            <div class="mode-card-icon timer-icon">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="13" r="8"></circle>
+                <path d="M12 9v4l2.5 2.5"></path>
+                <path d="M12 2v2"></path>
+                <path d="M8 2h8"></path>
+              </svg>
+            </div>
+            <div class="mode-card-body">
+              <h3 class="mode-card-title">Режим «Экзамен» <span class="timer-emoji">⏱️</span></h3>
+              <p class="mode-card-desc">
+                Реальное тестирование с таймером. Ответы не показываются до окончания теста. Итоговая оценка в конце.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Settings & Actions Section -->
+        <div class="bottom-section">
+          <div class="settings-column">
+            <h4 class="settings-title">Настройки</h4>
+            
+            <div class="count-selector-row">
+              <span class="count-label">Количество вопросов:</span>
+              <div class="custom-select-wrapper">
+                <select id="questionCountSelect" class="custom-select">
+                  <option value="all">Все вопросы (161)</option>
+                  <option value="25">25 случайных вопросов</option>
+                  <option value="50">50 случайных вопросов</option>
+                  <option value="100">100 случайных вопросов</option>
+                </select>
+                <span class="select-chevron">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <div class="checkbox-list">
+              <label class="custom-checkbox-row">
+                <input type="checkbox" id="shuffleQuestionsCheck" checked>
+                <span class="custom-checkbox-box">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </span>
+                <span class="checkbox-text">Перемешивать порядок вопросов</span>
+              </label>
+
+              <label class="custom-checkbox-row">
+                <input type="checkbox" id="shuffleOptionsCheck">
+                <span class="custom-checkbox-box">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </span>
+                <span class="checkbox-text">Перемешивать варианты ответов</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Action buttons column -->
+          <div class="actions-column">
+            <button class="btn-primary-gradient" id="startBtn">
+              <span>Начать тестирование</span>
+              <span class="btn-arrow">▶</span>
+            </button>
+            <button class="btn-secondary-outline" id="openSearchFromHomeBtn">
+              <span>Открыть шпаргалку</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Screen 2: Quiz Screen -->
+    <section id="quizScreen" class="screen">
+      <div class="main-card quiz-card">
+        <!-- Quiz Header -->
+        <div class="quiz-header">
+          <div class="quiz-meta">
+            <span id="quizModeBadge" class="mode-badge mode-practice">💡 Обучение</span>
+            <span id="questionCounter" class="question-counter-badge">Вопрос 1 из 161</span>
+          </div>
+          <div id="quizTimer" class="timer" style="display: none;">
+            <span>⏱️</span>
+            <span class="timer-digits">45:00</span>
+          </div>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="progress-container">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- Question Body -->
+        <div class="question-category-tag" id="questionCategory">Вопрос #1</div>
+        <h3 class="question-title" id="questionText">Загрузка вопроса...</h3>
+
+        <!-- Options Container -->
+        <div class="options-container" id="optionsContainer">
+          <!-- Dynamically populated options -->
+        </div>
+
+        <!-- Quiz Controls Bar -->
+        <div class="quiz-controls-bar">
+          <button class="btn-control btn-secondary-pill" id="prevBtn">
+            ← Назад
+          </button>
+          <div class="quiz-controls-right">
+            <button class="btn-control btn-exit-pill" id="exitQuizBtn">
+              Выйти
+            </button>
+            <button class="btn-control btn-primary-pill" id="nextBtn">
+              Далее →
+            </button>
+          </div>
+        </div>
+
+        <!-- Navigation Grid Card -->
+        <div class="nav-grid-panel">
+          <div class="nav-grid-top">
+            <h5 class="nav-grid-title">Быстрый переход к вопросу</h5>
+            <span class="nav-grid-stats" id="answeredStats">Отвечено: 0 / 161</span>
+          </div>
+          <div class="nav-grid-cells" id="questionNavGrid">
+            <!-- 1..161 buttons -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 3: Results Screen -->
+    <section id="resultsScreen" class="screen">
+      <div class="main-card results-card">
+        <div class="score-circle-wrapper">
+          <div class="score-circle">
+            <span class="score-percent" id="resPercent">0%</span>
+            <span class="score-fraction" id="resFraction">0 / 0</span>
+          </div>
+        </div>
+
+        <div id="gradeBadge" class="grade-pill grade-5">Отлично (5)</div>
+        <p id="gradeMessage" class="grade-description">
+          Поздравляем! Вы отлично справились с экзаменационным тестом.
+        </p>
+
+        <!-- Stats Grid -->
+        <div class="results-stats-grid">
+          <div class="stat-box">
+            <div class="stat-value correct-color" id="statCorrect">0</div>
+            <div class="stat-caption">Правильно</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value wrong-color" id="statWrong">0</div>
+            <div class="stat-caption">Ошибок</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value skipped-color" id="statSkipped">0</div>
+            <div class="stat-caption">Пропущено</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value time-color" id="statTime">00:00</div>
+            <div class="stat-caption">Время</div>
+          </div>
+        </div>
+
+        <!-- Results Action Buttons -->
+        <div class="results-actions-bar">
+          <button class="btn-primary-gradient" id="retryAllBtn">
+            <span>🔄 Пройти заново</span>
+          </button>
+          <button class="btn-secondary-outline" id="retryErrorsBtn" style="display: none;">
+            <span>⚠️ Повторить ошибки</span>
+          </button>
+          <button class="btn-secondary-outline" id="resultsHomeBtn">
+            <span>🏠 На главную</span>
+          </button>
+        </div>
+
+        <!-- Detailed Review Section -->
+        <div class="review-wrapper">
+          <div class="review-toolbar">
+            <h4 class="review-title">Подробный разбор ответов</h4>
+            <div class="filter-pills">
+              <button class="filter-pill active" data-filter="all">Все</button>
+              <button class="filter-pill" data-filter="wrong">Только ошибки</button>
+              <button class="filter-pill" data-filter="correct">Правильные</button>
+            </div>
+          </div>
+          <div class="review-list" id="reviewContainer">
+            <!-- Review items -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Cheatsheet / Search Modal -->
+  <div class="modal-backdrop" id="searchModal">
+    <div class="modal-window">
+      <div class="modal-top">
+        <div class="modal-title-wrap">
+          <span class="modal-icon">🔍</span>
+          <h3>Шпаргалка и поиск по базе вопросов</h3>
+        </div>
+        <button class="btn-close-modal" id="closeSearchBtn">✕</button>
+      </div>
+      <div class="modal-search-box">
+        <input type="text" id="searchInput" class="modal-search-input" placeholder="Введите ключевое слово (например: BIOS, sfc, память, 80 Plus, SATA)...">
+      </div>
+      <div class="modal-scroll-area">
+        <div class="search-items-container" id="searchResultsList">
+          <!-- Dynamic search matches -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
