@@ -1,5 +1,6 @@
 // Application State
 const state = {
+  subject: 'pm1', // 'pm1' or 'pm2'
   mode: 'practice', // 'practice' or 'exam'
   questions: [],
   currentIndex: 0,
@@ -20,11 +21,19 @@ const elements = {
   searchInput: document.getElementById('searchInput'),
   searchResultsList: document.getElementById('searchResultsList'),
   headerLogo: document.getElementById('headerLogo'),
+  headerTitle: document.getElementById('headerTitle'),
 
   // Screens
   startScreen: document.getElementById('startScreen'),
   quizScreen: document.getElementById('quizScreen'),
   resultsScreen: document.getElementById('resultsScreen'),
+
+  // Subject Selector & Hero
+  subjectBtnPm1: document.getElementById('subjectBtnPm1'),
+  subjectBtnPm2: document.getElementById('subjectBtnPm2'),
+  badgeText: document.getElementById('badgeText'),
+  heroTitle: document.getElementById('heroTitle'),
+  heroSubtitle: document.getElementById('heroSubtitle'),
 
   // Start Screen Controls
   modeCardPractice: document.getElementById('modeCardPractice'),
@@ -61,18 +70,58 @@ const elements = {
   retryErrorsBtn: document.getElementById('retryErrorsBtn'),
   resultsHomeBtn: document.getElementById('resultsHomeBtn'),
   reviewContainer: document.getElementById('reviewContainer'),
-  filterButtons: document.querySelectorAll('.filter-btn')
+  filterButtons: document.querySelectorAll('.filter-btn'),
+
+  // Confirm Modal Controls
+  confirmModal: document.getElementById('confirmModal'),
+  confirmIcon: document.getElementById('confirmIcon'),
+  confirmTitle: document.getElementById('confirmTitle'),
+  confirmText: document.getElementById('confirmText'),
+  confirmCancelBtn: document.getElementById('confirmCancelBtn'),
+  confirmOkBtn: document.getElementById('confirmOkBtn')
 };
 
-// --- Theme Management ---
+// --- Custom Confirmation Modal ---
+let confirmCallback = null;
+
+function showConfirm(title, text, onConfirm, icon = '⚠️') {
+  elements.confirmTitle.textContent = title;
+  elements.confirmText.textContent = text;
+  elements.confirmIcon.textContent = icon;
+  confirmCallback = onConfirm;
+  elements.confirmModal.classList.add('open');
+}
+
+function closeConfirm() {
+  elements.confirmModal.classList.remove('open');
+  confirmCallback = null;
+}
+
+// --- Theme Management (System Theme Aware) ---
+function getSystemTheme() {
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
 function initTheme() {
-  const savedTheme = localStorage.getItem('exam_quiz_theme') || 'light';
-  document.documentElement.setAttribute('data-theme', savedTheme);
-  updateThemeIcon(savedTheme);
+  const savedTheme = localStorage.getItem('exam_quiz_theme');
+  const activeTheme = savedTheme ? savedTheme : getSystemTheme();
+  document.documentElement.setAttribute('data-theme', activeTheme);
+  updateThemeIcon(activeTheme);
+
+  // Listen to system theme changes in real time if no manual override
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+      if (!localStorage.getItem('exam_quiz_theme')) {
+        const sysTheme = e.matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', sysTheme);
+        updateThemeIcon(sysTheme);
+      }
+    });
+  }
 }
 
 function toggleTheme() {
-  const current = document.documentElement.getAttribute('data-theme') || 'light';
+  const current = document.documentElement.getAttribute('data-theme') || getSystemTheme();
   const newTheme = current === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', newTheme);
   localStorage.setItem('exam_quiz_theme', newTheme);
@@ -80,7 +129,11 @@ function toggleTheme() {
 }
 
 function updateThemeIcon(theme) {
-  elements.themeToggleBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+  if (theme === 'dark') {
+    elements.themeToggleBtn.innerHTML = '☀️';
+  } else {
+    elements.themeToggleBtn.innerHTML = '<span class="theme-icon-orb"></span>';
+  }
 }
 
 // --- Screen Switching ---
@@ -88,6 +141,40 @@ function showScreen(screen) {
   [elements.startScreen, elements.quizScreen, elements.resultsScreen].forEach(s => s.classList.remove('active'));
   screen.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// --- Subject Switching ---
+function getCurrentSubjectQuestions() {
+  if (typeof EXAM_DATA !== 'undefined' && EXAM_DATA[state.subject]) {
+    return EXAM_DATA[state.subject];
+  }
+  if (typeof EXAM_QUESTIONS !== 'undefined') {
+    return EXAM_QUESTIONS;
+  }
+  return [];
+}
+
+function setSubject(subj) {
+  state.subject = subj;
+  localStorage.setItem('exam_subject', subj);
+
+  if (subj === 'pm2') {
+    elements.subjectBtnPm1.classList.remove('active');
+    elements.subjectBtnPm2.classList.add('active');
+    elements.headerTitle.textContent = 'Экзамен ПМ2';
+    elements.heroTitle.textContent = 'Тестирование по профессиональному модулю ПМ2';
+    elements.heroSubtitle.textContent = 'Компьютерная графика, 2D/3D моделирование и дизайн (Photoshop, Blender, Krita, GIMP, SketchUp, Tinkercad). В каждом вопросе только один правильный ответ.';
+    elements.badgeText.textContent = '169 уникальных вопросов • Без повторений';
+    elements.questionCountSelect.options[0].text = 'Все вопросы (169)';
+  } else {
+    elements.subjectBtnPm2.classList.remove('active');
+    elements.subjectBtnPm1.classList.add('active');
+    elements.headerTitle.textContent = 'Экзамен ПМ1';
+    elements.heroTitle.textContent = 'Тестирование по профессиональному модулю ПМ1';
+    elements.heroSubtitle.textContent = 'Архитектура ПК, операционные системы, диагностика и сети. В каждом вопросе несколько вариантов ответа и только один правильный.';
+    elements.badgeText.textContent = '161 уникальный вопрос • Без повторений';
+    elements.questionCountSelect.options[0].text = 'Все вопросы (161)';
+  }
 }
 
 // --- Utility: Shuffle Array ---
@@ -102,12 +189,13 @@ function shuffleArray(arr) {
 
 // --- Start Quiz ---
 function startQuiz(customQuestions = null) {
-  if (typeof EXAM_QUESTIONS === 'undefined' || !EXAM_QUESTIONS.length) {
+  const subjectQuestions = getCurrentSubjectQuestions();
+  if (!subjectQuestions || !subjectQuestions.length) {
     alert('Ошибка: вопросы не загружены.');
     return;
   }
 
-  let pool = customQuestions ? [...customQuestions] : [...EXAM_QUESTIONS];
+  let pool = customQuestions ? [...customQuestions] : [...subjectQuestions];
 
   const shuffleQ = elements.shuffleQuestionsCheck.checked;
   const shuffleOpt = elements.shuffleOptionsCheck.checked;
@@ -475,11 +563,13 @@ function renderSearchResults(query) {
   const qClean = query.trim().toLowerCase();
   const letters = ['A', 'B', 'C', 'D', 'E'];
 
-  if (typeof EXAM_QUESTIONS === 'undefined') return;
+  const subjectQuestions = getCurrentSubjectQuestions();
+  if (!subjectQuestions || !subjectQuestions.length) return;
 
-  const results = EXAM_QUESTIONS.filter(item => {
+  const results = subjectQuestions.filter(item => {
     if (!qClean) return true;
     return item.question.toLowerCase().includes(qClean) ||
+           (item.section && item.section.toLowerCase().includes(qClean)) ||
            item.options.some(opt => opt.toLowerCase().includes(qClean));
   });
 
@@ -493,6 +583,16 @@ function renderSearchResults(query) {
   displayList.forEach(item => {
     const card = document.createElement('div');
     card.className = 'search-item';
+
+    if (item.section) {
+      const secTag = document.createElement('div');
+      secTag.style.fontSize = '0.75rem';
+      secTag.style.fontWeight = '700';
+      secTag.style.color = 'var(--primary)';
+      secTag.style.marginBottom = '0.25rem';
+      secTag.textContent = item.section;
+      card.appendChild(secTag);
+    }
 
     const qText = document.createElement('div');
     qText.className = 'search-item-q';
@@ -514,13 +614,17 @@ function setupEvents() {
   // Theme toggle
   elements.themeToggleBtn.addEventListener('click', toggleTheme);
 
+  // Subject Selection
+  elements.subjectBtnPm1.addEventListener('click', () => setSubject('pm1'));
+  elements.subjectBtnPm2.addEventListener('click', () => setSubject('pm2'));
+
   // Logo / Home click
   elements.headerLogo.addEventListener('click', () => {
     if (elements.quizScreen.classList.contains('active')) {
-      if (confirm('Прервать текущее тестирование и вернуться на главную страницу?')) {
+      showConfirm('Прервать тестирование?', 'Текущий прогресс будет сброшен. Вернуться на главную страницу?', () => {
         clearInterval(state.timerInterval);
         showScreen(elements.startScreen);
-      }
+      }, '🏠');
     } else {
       showScreen(elements.startScreen);
     }
@@ -558,9 +662,9 @@ function setupEvents() {
       // Last question -> Finish
       const unans = state.questions.filter(q => q.userAnswer === null).length;
       if (unans > 0) {
-        if (confirm(`У вас осталось неотвеченных вопросов: ${unans}. Всё равно завершить тест?`)) {
+        showConfirm('Остались вопросы', `У вас осталось неотвеченных вопросов: ${unans}. Всё равно завершить тест и посмотреть результаты?`, () => {
           finishQuiz();
-        }
+        }, '⏳');
       } else {
         finishQuiz();
       }
@@ -569,9 +673,20 @@ function setupEvents() {
 
   // Exit Quiz Button
   elements.exitQuizBtn.addEventListener('click', () => {
-    if (confirm('Вы уверены, что хотите завершить тест и посмотреть результаты?')) {
+    showConfirm('Завершить тест?', 'Вы уверены, что хотите завершить тестирование и перейти к результатам?', () => {
       finishQuiz();
-    }
+    }, '🏁');
+  });
+
+  // Confirmation Modal Events
+  elements.confirmCancelBtn.addEventListener('click', closeConfirm);
+  elements.confirmOkBtn.addEventListener('click', () => {
+    const cb = confirmCallback;
+    closeConfirm();
+    if (cb) cb();
+  });
+  elements.confirmModal.addEventListener('click', e => {
+    if (e.target === elements.confirmModal) closeConfirm();
   });
 
   // Results Buttons
@@ -639,6 +754,8 @@ function setupEvents() {
 // --- Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
+  const savedSubject = localStorage.getItem('exam_subject') || 'pm1';
+  setSubject(savedSubject);
   setupEvents();
 });
 

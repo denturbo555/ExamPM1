@@ -23,7 +23,7 @@
           </svg>
         </div>
         <div class="logo-text">
-          <h1>Экзамен ПМ1</h1>
+          <h1 id="headerTitle">Экзамен ПМ1</h1>
           <span>Тестирование и подготовка</span>
         </div>
       </div>
@@ -47,14 +47,24 @@
     <!-- Screen 1: Start / Setup Screen -->
     <section id="startScreen" class="screen active">
       <div class="main-card">
+        <!-- Subject Selection Tabs -->
+        <div class="subject-toggle-row">
+          <button class="subject-tab-btn active" data-subject="pm1" id="subjectBtnPm1" type="button">
+            💻 Модуль ПМ1
+          </button>
+          <button class="subject-tab-btn" data-subject="pm2" id="subjectBtnPm2" type="button">
+            🎨 Модуль ПМ2
+          </button>
+        </div>
+
         <!-- Top Badge -->
         <div class="badge-pill">
           <span class="badge-sparkle">★</span>
-          <span>161 уникальный вопрос • Без повторений</span>
+          <span id="badgeText">161 уникальный вопрос • Без повторений</span>
         </div>
 
-        <h2 class="hero-title">Тестирование по профессиональному модулю ПМ1</h2>
-        <p class="hero-subtitle">
+        <h2 class="hero-title" id="heroTitle">Тестирование по профессиональному модулю ПМ1</h2>
+        <p class="hero-subtitle" id="heroSubtitle">
           Проверьте свои знания или подготовьтесь к экзамену. В каждом вопросе несколько вариантов ответа и только один правильный.
         </p>
 
@@ -298,6 +308,22 @@
       </div>
     </div>
   </div>
+
+  <!-- Custom Confirmation Modal -->
+  <div class="modal-backdrop" id="confirmModal">
+    <div class="modal-window confirm-modal-window">
+      <div class="confirm-modal-body">
+        <div class="confirm-modal-icon" id="confirmIcon">⚠️</div>
+        <h4 class="confirm-modal-title" id="confirmTitle">Подтвердите действие</h4>
+        <p class="confirm-modal-text" id="confirmText">Вы уверены?</p>
+        <div class="confirm-modal-actions">
+          <button class="btn-control btn-secondary-pill" id="confirmCancelBtn" type="button">Отмена</button>
+          <button class="btn-primary-gradient" id="confirmOkBtn" type="button" style="width: auto; padding: 0.65rem 1.4rem;">Да, продолжить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   <!-- Scripts -->
   <script src="questions.js"></script>
